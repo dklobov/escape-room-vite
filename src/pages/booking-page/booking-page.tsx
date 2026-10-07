@@ -1,11 +1,16 @@
 import {Navigate, useParams} from 'react-router-dom';
 
+import Map from '../../components/map/map';
 import {AppRoute} from '../../const';
+import {BOOKING_PLACES} from '../../mocks/booking-places';
 import {QUESTS} from '../../mocks/quests';
+
+const BOOKING_MAP_ZOOM = 11;
 
 function BookingPage(): JSX.Element {
   const {id} = useParams();
   const quest = QUESTS.find((item) => item.id === id);
+  const selectedPlace = BOOKING_PLACES[0];
 
   if (!quest) {
     return <Navigate to={AppRoute.NotFound} replace />;
@@ -42,10 +47,15 @@ function BookingPage(): JSX.Element {
         <div className="page-content__item">
           <div className="booking-map">
             <div className="map">
-              <div className="map__container"></div>
+              <Map
+                center={selectedPlace.location}
+                zoom={BOOKING_MAP_ZOOM}
+                points={BOOKING_PLACES}
+                activePointId={selectedPlace.id}
+              />
             </div>
             <p className="booking-map__address">
-              Вы выбрали: наб. реки Карповки 5, лит П, м. Петроградская
+              Вы выбрали: {selectedPlace.address}
             </p>
           </div>
         </div>
