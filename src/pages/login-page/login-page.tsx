@@ -1,4 +1,12 @@
-function LoginPage(): JSX.Element {
+type LoginPageProps = {
+  onLoginSubmit: () => void;
+};
+
+function LoginPage({onLoginSubmit}: LoginPageProps): JSX.Element {
+  const handleFormSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    onLoginSubmit();
+  };
   return (
     <main className="decorated-page login">
       <div className="decorated-page__decor" aria-hidden="true">
@@ -19,7 +27,7 @@ function LoginPage(): JSX.Element {
 
       <div className="container container--size-l">
         <div className="login__form">
-          <form className="login-form" action="#" method="post">
+          <form className="login-form" action="#" method="post" onSubmit={handleFormSubmit}>
             <div className="login-form__inner-wrapper">
               <h1 className="title title--size-s login-form__title">Вход</h1>
 

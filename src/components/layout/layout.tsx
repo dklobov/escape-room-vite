@@ -1,10 +1,19 @@
 import {Outlet} from 'react-router-dom';
+
 import Header from '../header/header';
 
-function Layout(): JSX.Element {
+type LayoutProps = {
+  isAuthorized: boolean;
+  onLogoutButtonClick: () => void;
+};
+
+function Layout({isAuthorized, onLogoutButtonClick}: LayoutProps): JSX.Element {
   return (
     <div className="wrapper">
-      <Header isAuthorized={false} />
+      <Header
+        isAuthorized={isAuthorized}
+        onLogoutButtonClick={onLogoutButtonClick}
+      />
       <Outlet />
     </div>
   );
