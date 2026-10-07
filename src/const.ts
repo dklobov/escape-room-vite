@@ -8,6 +8,9 @@ const AppRoute = {
   NotFound: '*',
 } as const;
 
+const BASE_URL = 'https://grading.design.htmlacademy.pro/v1/escape-room';
+const REQUEST_TIMEOUT = 5000;
+
 const QuestType = {
   All: 'all',
   Adventures: 'adventures',
@@ -90,10 +93,12 @@ type QuestLevelValue = typeof QuestLevel[keyof typeof QuestLevel];
 export {
   AppRoute,
   AUTHORIZATION_STATUS_KEY,
+  BASE_URL,
   QuestLevel,
   QuestType,
   QUEST_LEVEL_FILTERS,
   QUEST_TYPE_FILTERS,
+  REQUEST_TIMEOUT,
 };
 
 export type {QuestLevelValue, QuestTypeValue};
