@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
 
 import Map from '../../components/map/map';
@@ -10,7 +11,8 @@ const BOOKING_MAP_ZOOM = 11;
 function BookingPage(): JSX.Element {
   const {id} = useParams();
   const quest = QUESTS.find((item) => item.id === id);
-  const selectedPlace = BOOKING_PLACES[0];
+  const [selectedPlaceId, setSelectedPlaceId] = useState(BOOKING_PLACES[0].id);
+  const selectedPlace = BOOKING_PLACES.find((place) => place.id === selectedPlaceId) ?? BOOKING_PLACES[0];
 
   if (!quest) {
     return <Navigate to={AppRoute.NotFound} replace />;
@@ -52,6 +54,7 @@ function BookingPage(): JSX.Element {
                 zoom={BOOKING_MAP_ZOOM}
                 points={BOOKING_PLACES}
                 activePointId={selectedPlace.id}
+                onPointClick={setSelectedPlaceId}
               />
             </div>
             <p className="booking-map__address">
