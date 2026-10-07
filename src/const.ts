@@ -82,6 +82,9 @@ const QUEST_LEVEL_FILTERS = [
   },
 ] as const;
 
+type QuestTypeValue = typeof QuestType[keyof typeof QuestType];
+type QuestLevelValue = typeof QuestLevel[keyof typeof QuestLevel];
+
 export {
   AppRoute,
   QuestLevel,
@@ -89,3 +92,5 @@ export {
   QUEST_LEVEL_FILTERS,
   QUEST_TYPE_FILTERS,
 };
+
+export type {QuestLevelValue, QuestTypeValue};

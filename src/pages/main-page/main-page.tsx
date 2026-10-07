@@ -1,8 +1,22 @@
+import {useState} from 'react';
+
 import QuestCard from '../../components/quest-card/quest-card';
 import QuestsFilter from '../../components/quests-filter/quests-filter';
+import {QuestLevel, QuestType} from '../../const';
+import type {QuestLevelValue, QuestTypeValue} from '../../const';
 import {QUESTS} from '../../mocks/quests';
 
 function MainPage(): JSX.Element {
+  const [currentType, setCurrentType] = useState<QuestTypeValue>(QuestType.All);
+  const [currentLevel, setCurrentLevel] = useState<QuestLevelValue>(QuestLevel.Any);
+
+  const filteredQuests = QUESTS.filter((quest) => {
+    const isTypeMatched = currentType === QuestType.All || quest.type === currentType;
+    const isLevelMatched = currentLevel === QuestLevel.Any || quest.level === currentLevel;
+
+    return isTypeMatched && isLevelMatched;
+  });
+
   return (
     <main className="page-content">
       <div className="container">
@@ -16,12 +30,17 @@ function MainPage(): JSX.Element {
         </div>
 
         <div className="page-content__item">
-          <QuestsFilter />
+          <QuestsFilter
+            currentType={currentType}
+            currentLevel={currentLevel}
+            onTypeChange={setCurrentType}
+            onLevelChange={setCurrentLevel}
+          />
         </div>
 
         <h2 className="title visually-hidden">Выберите квест</h2>
         <div className="cards-grid">
-          {QUESTS.map((quest) => (
+          {filteredQuests.map((quest) => (
             <QuestCard
               key={quest.id}
               id={quest.id}
