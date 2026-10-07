@@ -6,7 +6,15 @@ const CONTACTS_MAP_CENTER = {
 };
 
 const CONTACTS_MAP_ZOOM = 16;
-const CONTACTS_MARKER_TITLE = 'Escape Room';
+const CONTACTS_POINT_ID = 'contacts';
+
+const CONTACTS_POINTS = [
+  {
+    id: CONTACTS_POINT_ID,
+    title: 'Escape Room',
+    location: CONTACTS_MAP_CENTER,
+  },
+];
 
 function ContactsPage(): JSX.Element {
   return (
@@ -77,7 +85,8 @@ function ContactsPage(): JSX.Element {
               <Map
                 center={CONTACTS_MAP_CENTER}
                 zoom={CONTACTS_MAP_ZOOM}
-                markerTitle={CONTACTS_MARKER_TITLE}
+                points={CONTACTS_POINTS}
+                activePointId={CONTACTS_POINT_ID}
               />
             </div>
           </div>

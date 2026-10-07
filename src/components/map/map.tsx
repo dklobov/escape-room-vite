@@ -3,13 +3,23 @@ import 'leaflet/dist/leaflet.css';
 import {Icon, Marker, layerGroup, map, tileLayer} from 'leaflet';
 import {useEffect, useRef} from 'react';
 
+type MapPoint = {
+  id: string;
+  title: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+};
+
 type MapProps = {
   center: {
     lat: number;
     lng: number;
   };
   zoom: number;
-  markerTitle: string;
+  points: MapPoint[];
+  activePointId?: string;
 };
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -23,7 +33,13 @@ const defaultCustomIcon = new Icon({
   iconAnchor: [DEFAULT_MARKER_ICON_ANCHOR, DEFAULT_MARKER_ICON_SIZE],
 });
 
-function Map({center, zoom, markerTitle}: MapProps): JSX.Element {
+const activeCustomIcon = new Icon({
+  iconUrl: '/img/svg/pin-active.svg',
+  iconSize: [DEFAULT_MARKER_ICON_SIZE, DEFAULT_MARKER_ICON_SIZE],
+  iconAnchor: [DEFAULT_MARKER_ICON_ANCHOR, DEFAULT_MARKER_ICON_SIZE],
+});
+
+function Map({center, zoom, points, activePointId}: MapProps): JSX.Element {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -38,11 +54,14 @@ function Map({center, zoom, markerTitle}: MapProps): JSX.Element {
       attribution: TILE_LAYER_ATTRIBUTE,
     }).addTo(leafletMap);
 
-    Marker.prototype.options.icon = defaultCustomIcon;
+    points.forEach((point) => {
+      const icon = point.id === activePointId ? activeCustomIcon : defaultCustomIcon;
 
-    new Marker(center, {
-      title: markerTitle,
-    }).addTo(markerLayer);
+      new Marker(point.location, {
+        title: point.title,
+        icon,
+      }).addTo(markerLayer);
+    });
 
     const timeoutId = setTimeout(() => {
       leafletMap.invalidateSize();
@@ -52,7 +71,7 @@ function Map({center, zoom, markerTitle}: MapProps): JSX.Element {
       clearTimeout(timeoutId);
       leafletMap.remove();
     };
-  }, [center, markerTitle, zoom]);
+  }, [activePointId, center, points, zoom]);
 
   return <div className="map__container" ref={mapRef}></div>;
 }
