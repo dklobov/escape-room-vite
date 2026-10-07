@@ -18,12 +18,12 @@ function QuestPage(): JSX.Element {
 
   const {
     title,
-    type,
+    typeLabel,
     description,
     coverImg,
     coverImgWebp,
     coverImgAlt,
-    level,
+    levelLabel,
     peopleMinCount,
     peopleMaxCount,
   } = quest;
@@ -45,7 +45,7 @@ function QuestPage(): JSX.Element {
           </h1>
           <p className="subtitle quest-page__subtitle">
             <span className="visually-hidden">Жанр:</span>
-            {type}
+            {typeLabel}
           </p>
           <ul className="tags tags--size-l quest-page__tags">
             <li className="tags__item">
@@ -58,7 +58,7 @@ function QuestPage(): JSX.Element {
               <svg width="14" height="14" aria-hidden="true">
                 <use xlinkHref="#icon-level"></use>
               </svg>
-              {level}
+              {levelLabel}
             </li>
           </ul>
           <p className="quest-page__description">{description}</p>

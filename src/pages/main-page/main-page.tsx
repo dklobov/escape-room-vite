@@ -29,7 +29,7 @@ function MainPage(): JSX.Element {
               previewImg={quest.previewImg}
               previewImgWebp={quest.previewImgWebp}
               previewImgAlt={quest.previewImgAlt}
-              level={quest.level}
+              level={quest.levelLabel}
               peopleMinCount={quest.peopleMinCount}
               peopleMaxCount={quest.peopleMaxCount}
             />

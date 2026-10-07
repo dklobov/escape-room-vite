@@ -1,7 +1,10 @@
+import {QuestLevel, QuestType} from '../const';
+
 type QuestPreview = {
   id: string;
   title: string;
-  type: string;
+  type: typeof QuestType[keyof typeof QuestType];
+  typeLabel: string;
   description: string;
   previewImg: string;
   previewImgWebp: string;
@@ -9,7 +12,8 @@ type QuestPreview = {
   coverImg: string;
   coverImgWebp: string;
   coverImgAlt: string;
-  level: string;
+  level: typeof QuestLevel[keyof typeof QuestLevel];
+  levelLabel: string;
   peopleMinCount: number;
   peopleMaxCount: number;
 };
@@ -18,7 +22,8 @@ const QUESTS: QuestPreview[] = [
   {
     id: 'crypt',
     title: 'Склеп',
-    type: 'Приключения',
+    type: QuestType.Adventures,
+    typeLabel: 'Приключения',
     description: 'Средневековый склеп скрывает больше тайн, чем кажется на первый взгляд. Вам предстоит найти старые записи, разгадать семейную тайну и выбраться наружу до того, как каменные двери закроются навсегда.',
     previewImg: 'img/content/crypt/crypt-size-s.jpg',
     previewImgWebp: 'img/content/crypt/crypt-size-s.webp',
@@ -26,14 +31,16 @@ const QUESTS: QuestPreview[] = [
     coverImg: 'img/content/crypt/crypt-size-m@2x.jpg',
     coverImgWebp: 'img/content/crypt/crypt-size-s@2x.webp',
     coverImgAlt: 'Мрачное подземелье со старой клеткой.',
-    level: 'Сложный',
+    level: QuestLevel.Hard,
+    levelLabel: 'Сложный',
     peopleMinCount: 2,
     peopleMaxCount: 5,
   },
   {
     id: 'maniac',
     title: 'Маньяк',
-    type: 'Ужасы',
+    type: QuestType.Horror,
+    typeLabel: 'Ужасы',
     description: 'В комнате с приглушённым светом несколько человек, незнакомых друг с другом, приходят в себя. Никто не помнит, что произошло прошлым вечером. Руки и ноги связаны, но одному из вас получилось освободиться. Сможете ли вы разобраться, что произошло, помочь другим и выбраться из комнаты?',
     previewImg: 'img/content/maniac/maniac-size-s.jpg',
     previewImgWebp: 'img/content/maniac/maniac-size-s.webp',
@@ -41,14 +48,16 @@ const QUESTS: QuestPreview[] = [
     coverImg: 'img/content/maniac/maniac-size-m.jpg',
     coverImgWebp: 'img/content/maniac/maniac-size-m.webp',
     coverImgAlt: 'Мужчина в маске стоит в тёмном помещении.',
-    level: 'Средний',
+    level: QuestLevel.Medium,
+    levelLabel: 'Средний',
     peopleMinCount: 3,
     peopleMaxCount: 6,
   },
   {
     id: 'ritual',
     title: 'Ритуал',
-    type: 'Мистика',
+    type: QuestType.Mystic,
+    typeLabel: 'Мистика',
     description: 'Старый дом давно пустует, но каждую ночь в нём загораются свечи. Вам предстоит попасть внутрь, восстановить ход загадочного обряда и понять, что именно пробудилось в этих стенах.',
     previewImg: 'img/content/ritual/ritual-size-s.jpg',
     previewImgWebp: 'img/content/ritual/ritual-size-s.webp',
@@ -56,7 +65,8 @@ const QUESTS: QuestPreview[] = [
     coverImg: 'img/content/ritual/ritual-size-m@2x.jpg',
     coverImgWebp: 'img/content/ritual/ritual-size-s@2x.webp',
     coverImgAlt: 'Комната со свечами и мистическим реквизитом.',
-    level: 'Лёгкий',
+    level: QuestLevel.Easy,
+    levelLabel: 'Лёгкий',
     peopleMinCount: 3,
     peopleMaxCount: 5,
   },
