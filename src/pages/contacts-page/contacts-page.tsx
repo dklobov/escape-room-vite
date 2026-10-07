@@ -1,3 +1,13 @@
+import Map from '../../components/map/map';
+
+const CONTACTS_MAP_CENTER = {
+  lat: 59.968322,
+  lng: 30.317359,
+};
+
+const CONTACTS_MAP_ZOOM = 16;
+const CONTACTS_MARKER_TITLE = 'Escape Room';
+
 function ContactsPage(): JSX.Element {
   return (
     <main className="page-content decorated-page">
@@ -64,7 +74,11 @@ function ContactsPage(): JSX.Element {
 
           <div className="contacts__map">
             <div className="map">
-              <div className="map__container"></div>
+              <Map
+                center={CONTACTS_MAP_CENTER}
+                zoom={CONTACTS_MAP_ZOOM}
+                markerTitle={CONTACTS_MARKER_TITLE}
+              />
             </div>
           </div>
         </div>
