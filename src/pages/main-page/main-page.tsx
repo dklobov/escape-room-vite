@@ -1,4 +1,6 @@
+import QuestCard from '../../components/quest-card/quest-card';
 import QuestsFilter from '../../components/quests-filter/quests-filter';
+import {QUESTS} from '../../mocks/quests';
 
 function MainPage(): JSX.Element {
   return (
@@ -18,7 +20,21 @@ function MainPage(): JSX.Element {
         </div>
 
         <h2 className="title visually-hidden">Выберите квест</h2>
-        <div className="cards-grid"></div>
+        <div className="cards-grid">
+          {QUESTS.map((quest) => (
+            <QuestCard
+              key={quest.id}
+              id={quest.id}
+              title={quest.title}
+              previewImg={quest.previewImg}
+              previewImgWebp={quest.previewImgWebp}
+              previewImgAlt={quest.previewImgAlt}
+              level={quest.level}
+              peopleMinCount={quest.peopleMinCount}
+              peopleMaxCount={quest.peopleMaxCount}
+            />
+          ))}
+        </div>
       </div>
     </main>
   );
