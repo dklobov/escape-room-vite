@@ -82,11 +82,14 @@ const QUEST_LEVEL_FILTERS = [
   },
 ] as const;
 
+const AUTHORIZATION_STATUS_KEY = 'escape-room-authorization-status';
+
 type QuestTypeValue = typeof QuestType[keyof typeof QuestType];
 type QuestLevelValue = typeof QuestLevel[keyof typeof QuestLevel];
 
 export {
   AppRoute,
+  AUTHORIZATION_STATUS_KEY,
   QuestLevel,
   QuestType,
   QUEST_LEVEL_FILTERS,

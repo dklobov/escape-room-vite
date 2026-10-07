@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 
-import {AppRoute} from '../../const';
+import {AppRoute, AUTHORIZATION_STATUS_KEY} from '../../const';
 import Layout from '../layout/layout';
 import PrivateRoute from '../private-route/private-route';
 import BookingPage from '../../pages/booking-page/booking-page';
@@ -13,13 +13,17 @@ import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import QuestPage from '../../pages/quest-page/quest-page';
 
 function App(): JSX.Element {
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(
+    localStorage.getItem(AUTHORIZATION_STATUS_KEY) === 'true'
+  );
 
   const handleLoginSubmit = () => {
+    localStorage.setItem(AUTHORIZATION_STATUS_KEY, 'true');
     setIsAuthorized(true);
   };
 
   const handleLogoutButtonClick = () => {
+    localStorage.removeItem(AUTHORIZATION_STATUS_KEY);
     setIsAuthorized(false);
   };
 
