@@ -1,24 +1,7 @@
 import {QuestLevel, QuestType} from '../const';
+import type {Quest} from '../types/quest';
 
-type QuestPreview = {
-  id: string;
-  title: string;
-  type: typeof QuestType[keyof typeof QuestType];
-  typeLabel: string;
-  description: string;
-  previewImg: string;
-  previewImgWebp: string;
-  previewImgAlt: string;
-  coverImg: string;
-  coverImgWebp: string;
-  coverImgAlt: string;
-  level: typeof QuestLevel[keyof typeof QuestLevel];
-  levelLabel: string;
-  peopleMinCount: number;
-  peopleMaxCount: number;
-};
-
-const QUESTS: QuestPreview[] = [
+const QUESTS: Quest[] = [
   {
     id: 'crypt',
     title: 'Склеп',
@@ -73,4 +56,4 @@ const QUESTS: QuestPreview[] = [
 ];
 
 export {QUESTS};
-export type {QuestPreview};
+export type {Quest};
