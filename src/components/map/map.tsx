@@ -20,6 +20,7 @@ type MapProps = {
   zoom: number;
   points: MapPoint[];
   activePointId?: string;
+  onPointClick?: (pointId: string) => void;
 };
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -39,7 +40,7 @@ const activeCustomIcon = new Icon({
   iconAnchor: [DEFAULT_MARKER_ICON_ANCHOR, DEFAULT_MARKER_ICON_SIZE],
 });
 
-function Map({center, zoom, points, activePointId}: MapProps): JSX.Element {
+function Map({center, zoom, points, activePointId, onPointClick}: MapProps): JSX.Element {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -60,7 +61,11 @@ function Map({center, zoom, points, activePointId}: MapProps): JSX.Element {
       new Marker(point.location, {
         title: point.title,
         icon,
-      }).addTo(markerLayer);
+      })
+        .on('click', () => {
+          onPointClick?.(point.id);
+        })
+        .addTo(markerLayer);
     });
 
     const timeoutId = setTimeout(() => {
@@ -71,7 +76,7 @@ function Map({center, zoom, points, activePointId}: MapProps): JSX.Element {
       clearTimeout(timeoutId);
       leafletMap.remove();
     };
-  }, [activePointId, center, points, zoom]);
+  }, [activePointId, center, onPointClick, points, zoom]);
 
   return <div className="map__container" ref={mapRef}></div>;
 }
