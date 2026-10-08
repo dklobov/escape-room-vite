@@ -1,7 +1,11 @@
 import {configureStore} from '@reduxjs/toolkit';
 
+import {questsProcess} from './quests-process/quests-process';
+
 const store = configureStore({
-  reducer: {},
+  reducer: {
+    quests: questsProcess.reducer,
+  },
 });
 
 type State = ReturnType<typeof store.getState>;
