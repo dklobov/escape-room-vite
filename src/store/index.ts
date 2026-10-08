@@ -3,6 +3,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import {createApi} from '../services/api';
 import {bookingProcess} from './booking-process/booking-process';
 import {questsProcess} from './quests-process/quests-process';
+import {userProcess} from './user-process/user-process';
 
 const api = createApi();
 
@@ -10,6 +11,7 @@ const store = configureStore({
   reducer: {
     booking: bookingProcess.reducer,
     quests: questsProcess.reducer,
+    user: userProcess.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

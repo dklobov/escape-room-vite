@@ -35,6 +35,12 @@ const QuestLevel = {
   Hard: 'hard',
 } as const;
 
+const AuthorizationStatus = {
+  Authorized: 'authorized',
+  Unauthorized: 'unauthorized',
+  Unknown: 'unknown',
+} as const;
+
 const QUEST_TYPE_LABEL: Record<QuestCategoryValue, string> = {
   [QuestType.Adventures]: 'Приключения',
   [QuestType.Horror]: 'Ужасы',
@@ -110,6 +116,7 @@ const QUEST_LEVEL_FILTERS = [
 const AUTHORIZATION_STATUS_KEY = 'escape-room-authorization-status';
 const AUTH_TOKEN_KEY = 'escape-room-token';
 
+type AuthorizationStatusValue = typeof AuthorizationStatus[keyof typeof AuthorizationStatus];
 type QuestTypeValue = typeof QuestType[keyof typeof QuestType];
 type QuestLevelValue = typeof QuestLevel[keyof typeof QuestLevel];
 type QuestCategoryValue = Exclude<QuestTypeValue, typeof QuestType.All>;
@@ -120,6 +127,7 @@ export {
   AppRoute,
   AUTHORIZATION_STATUS_KEY,
   AUTH_TOKEN_KEY,
+  AuthorizationStatus,
   BASE_URL,
   QuestLevel,
   QuestType,
@@ -131,6 +139,7 @@ export {
 };
 
 export type {
+  AuthorizationStatusValue,
   QuestCategoryValue,
   QuestDifficultyValue,
   QuestLevelValue,
