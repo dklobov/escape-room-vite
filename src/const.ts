@@ -27,6 +27,20 @@ const QuestLevel = {
   Hard: 'hard',
 } as const;
 
+const QUEST_TYPE_LABEL = {
+  [QuestType.Adventures]: 'Приключения',
+  [QuestType.Horror]: 'Ужасы',
+  [QuestType.Mystic]: 'Мистика',
+  [QuestType.Detective]: 'Детектив',
+  [QuestType.SciFi]: 'Sci-fi',
+} as const;
+
+const QUEST_LEVEL_LABEL = {
+  [QuestLevel.Easy]: 'Лёгкий',
+  [QuestLevel.Medium]: 'Средний',
+  [QuestLevel.Hard]: 'Сложный',
+} as const;
+
 const QUEST_TYPE_FILTERS = [
   {
     type: QuestType.All,
@@ -97,7 +111,9 @@ export {
   QuestLevel,
   QuestType,
   QUEST_LEVEL_FILTERS,
+  QUEST_LEVEL_LABEL,
   QUEST_TYPE_FILTERS,
+  QUEST_TYPE_LABEL,
   REQUEST_TIMEOUT,
 };
 
