@@ -1,15 +1,22 @@
 import type {ReactElement} from 'react';
 import {Navigate} from 'react-router-dom';
 
-import {AppRoute} from '../../const';
+import {
+  AppRoute,
+  AuthorizationStatus,
+} from '../../const';
+import type {AuthorizationStatusValue} from '../../const';
 
 type PrivateRouteProps = {
-  isAuthorized: boolean;
+  authorizationStatus: AuthorizationStatusValue;
   children: ReactElement;
 };
 
-function PrivateRoute({isAuthorized, children}: PrivateRouteProps): JSX.Element {
-  if (!isAuthorized) {
+function PrivateRoute({authorizationStatus, children}: PrivateRouteProps): JSX.Element | null {
+  if (authorizationStatus === AuthorizationStatus.Unknown) {
+    return null;
+  }
+  if (authorizationStatus !== AuthorizationStatus.Authorized) {
     return <Navigate to={AppRoute.Login} replace />;
   }
 

@@ -1,11 +1,23 @@
+import type {FormEvent} from 'react';
+
+import type {LoginRequestDto} from '../../types/user-dto';
+
 type LoginPageProps = {
-  onLoginSubmit: () => void;
+  onLoginSubmit: (credentials: LoginRequestDto) => void;
 };
 
 function LoginPage({onLoginSubmit}: LoginPageProps): JSX.Element {
-  const handleFormSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    onLoginSubmit();
+
+    const formData = new FormData(evt.currentTarget);
+    const email = String(formData.get('email') ?? '');
+    const password = String(formData.get('password') ?? '');
+
+    onLoginSubmit({
+      email,
+      password,
+    });
   };
   return (
     <main className="decorated-page login">
