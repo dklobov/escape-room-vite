@@ -3,14 +3,16 @@ import {useState} from 'react';
 import QuestCard from '../../components/quest-card/quest-card';
 import QuestsFilter from '../../components/quests-filter/quests-filter';
 import {QuestLevel, QuestType} from '../../const';
+import {useAppSelector} from '../../hooks';
+import {getQuests} from '../../store/quests-process/selectors';
 import type {QuestLevelValue, QuestTypeValue} from '../../const';
-import {QUESTS} from '../../mocks/quests';
 
 function MainPage(): JSX.Element {
+  const quests = useAppSelector(getQuests);
   const [currentType, setCurrentType] = useState<QuestTypeValue>(QuestType.All);
   const [currentLevel, setCurrentLevel] = useState<QuestLevelValue>(QuestLevel.Any);
 
-  const filteredQuests = QUESTS.filter((quest) => {
+  const filteredQuests = quests.filter((quest) => {
     const isTypeMatched = currentType === QuestType.All || quest.type === currentType;
     const isLevelMatched = currentLevel === QuestLevel.Any || quest.level === currentLevel;
 
