@@ -127,34 +127,36 @@ function BookingPage(): JSX.Element {
         </div>
 
         <form className="booking-form" action="#" method="post">
-          <legend className="visually-hidden">Выбор даты и времени</legend>
+          <fieldset className="booking-form__section">
+            <legend className="visually-hidden">Выбор даты и времени</legend>
 
-          {Object.values(BookingSlotDay).map((day) => (
-            <fieldset className="booking-form__date-section" key={day}>
-              <legend className="booking-form__date-title">
-                {BOOKING_SLOT_DAY_LABEL[day]}
-              </legend>
-              <div className="booking-form__date-inner-wrapper">
-                {selectedPlace.slots[day].map((slot) => {
-                  const slotInputId = getSlotInputId(day, slot.time);
+            {Object.values(BookingSlotDay).map((day) => (
+              <fieldset className="booking-form__date-section" key={day}>
+                <legend className="booking-form__date-title">
+                  {BOOKING_SLOT_DAY_LABEL[day]}
+                </legend>
+                <div className="booking-form__date-inner-wrapper">
+                  {selectedPlace.slots[day].map((slot) => {
+                    const slotInputId = getSlotInputId(day, slot.time);
 
-                  return (
-                    <label className="custom-radio booking-form__date" key={slotInputId}>
-                      <input
-                        type="radio"
-                        id={slotInputId}
-                        name="date"
-                        required
-                        value={slotInputId}
-                        disabled={!slot.isAvailable}
-                      />
-                      <span className="custom-radio__label">{slot.time}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            </fieldset>
-          ))}
+                    return (
+                      <label className="custom-radio booking-form__date" key={slotInputId}>
+                        <input
+                          type="radio"
+                          id={slotInputId}
+                          name="date"
+                          required
+                          value={slotInputId}
+                          disabled={!slot.isAvailable}
+                        />
+                        <span className="custom-radio__label">{slot.time}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            ))}
+          </fieldset>
 
           <fieldset className="booking-form__section">
             <legend className="visually-hidden">Контактная информация</legend>
