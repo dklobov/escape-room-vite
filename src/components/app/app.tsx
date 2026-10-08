@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 
 import {AppRoute, AUTHORIZATION_STATUS_KEY} from '../../const';
 import Layout from '../layout/layout';
@@ -63,6 +63,7 @@ function App(): JSX.Element {
             }
           />
           <Route path={AppRoute.NotFound} element={<NotFoundPage />} />
+          <Route path={AppRoute.Unknown} element={<Navigate to={AppRoute.NotFound} replace />} />
         </Route>
       </Routes>
     </BrowserRouter>

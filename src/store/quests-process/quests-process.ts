@@ -14,7 +14,7 @@ const initialState: QuestsProcess = {
   quests: [],
   currentQuest: null,
   isQuestsLoading: false,
-  isQuestLoading: false,
+  isQuestLoading: true,
 };
 
 const questsProcess = createSlice({

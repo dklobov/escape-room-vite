@@ -1,16 +1,39 @@
+import {useEffect} from 'react';
 import {Link, Navigate, useParams} from 'react-router-dom';
 
 import {AppRoute} from '../../const';
-import {QUESTS} from '../../mocks/quests';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {fetchQuestAction} from '../../store/api-actions';
+import {
+  getCurrentQuest,
+  getQuestLoadingStatus,
+} from '../../store/quests-process/selectors';
 
 function QuestPage(): JSX.Element {
   const {id} = useParams();
+  const dispatch = useAppDispatch();
+  const quest = useAppSelector(getCurrentQuest);
+  const isQuestLoading = useAppSelector(getQuestLoadingStatus);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchQuestAction(id));
+    }
+  }, [dispatch, id]);
 
   if (!id) {
     return <Navigate to={AppRoute.NotFound} replace />;
   }
 
-  const quest = QUESTS.find((item) => item.id === id);
+  if (isQuestLoading) {
+    return (
+      <main className="page-content">
+        <div className="container">
+          <p>Загрузка квеста...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!quest) {
     return <Navigate to={AppRoute.NotFound} replace />;

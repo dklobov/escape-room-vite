@@ -5,7 +5,8 @@ const AppRoute = {
   Quest: '/quest/:id',
   Booking: '/quest/:id/booking',
   MyQuests: '/my-quests',
-  NotFound: '*',
+  NotFound: '/not-found',
+  Unknown: '*',
 } as const;
 
 const ApiRoute = {
