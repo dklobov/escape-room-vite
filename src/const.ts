@@ -11,6 +11,7 @@ const AppRoute = {
 
 const ApiRoute = {
   Booking: 'booking',
+  Login: '/login',
   Quest: '/quest',
   Quests: '/quest',
 } as const;
@@ -107,6 +108,7 @@ const QUEST_LEVEL_FILTERS = [
 ] as const;
 
 const AUTHORIZATION_STATUS_KEY = 'escape-room-authorization-status';
+const AUTH_TOKEN_KEY = 'escape-room-token';
 
 type QuestTypeValue = typeof QuestType[keyof typeof QuestType];
 type QuestLevelValue = typeof QuestLevel[keyof typeof QuestLevel];
@@ -117,6 +119,7 @@ export {
   ApiRoute,
   AppRoute,
   AUTHORIZATION_STATUS_KEY,
+  AUTH_TOKEN_KEY,
   BASE_URL,
   QuestLevel,
   QuestType,
