@@ -1,8 +1,13 @@
 import {ApiRoute} from '../const';
-import {adaptQuestPreviewToClient} from '../adapters/quest';
-import type {AppThunkAction} from '../types/action';
-import type {QuestPreviewDto} from '../types/quest-dto';
 import {
+  adaptQuestPreviewToClient,
+  adaptQuestToClient,
+} from '../adapters/quest';
+import type {AppThunkAction} from '../types/action';
+import type {QuestDto, QuestPreviewDto} from '../types/quest-dto';
+import {
+  setCurrentQuest,
+  setQuestLoadingStatus,
   setQuests,
   setQuestsLoadingStatus,
 } from './quests-process/quests-process';
@@ -24,4 +29,25 @@ function fetchQuestsAction(): AppThunkAction {
   };
 }
 
-export {fetchQuestsAction};
+function fetchQuestAction(id: string): AppThunkAction {
+  return async (dispatch, _getState, api) => {
+    dispatch(setQuestLoadingStatus(true));
+    dispatch(setCurrentQuest(null));
+
+    try {
+      const {data} = await api.get<QuestDto>(`${ApiRoute.Quest}/${id}`);
+      const quest = adaptQuestToClient(data);
+
+      dispatch(setCurrentQuest(quest));
+    } catch {
+      dispatch(setCurrentQuest(null));
+    } finally {
+      dispatch(setQuestLoadingStatus(false));
+    }
+  };
+}
+
+export {
+  fetchQuestAction,
+  fetchQuestsAction,
+};
