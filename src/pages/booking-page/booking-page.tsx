@@ -1,22 +1,85 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
 
 import Map from '../../components/map/map';
 import {AppRoute} from '../../const';
-import {BOOKING_PLACES} from '../../mocks/booking-places';
-import {QUESTS} from '../../mocks/quests';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {
+  fetchBookingPlacesAction,
+  fetchQuestAction,
+} from '../../store/api-actions';
+import {
+  getBookingPlaces,
+  getBookingPlacesLoadingStatus,
+} from '../../store/booking-process/selectors';
+import {
+  getCurrentQuest,
+  getQuestLoadingStatus,
+} from '../../store/quests-process/selectors';
 
 const BOOKING_MAP_ZOOM = 11;
 
+const BookingSlotDay = {
+  Today: 'today',
+  Tomorrow: 'tomorrow',
+} as const;
+
+const BOOKING_SLOT_DAY_LABEL = {
+  [BookingSlotDay.Today]: 'Сегодня',
+  [BookingSlotDay.Tomorrow]: 'Завтра',
+} as const;
+
+type BookingSlotDayValue = typeof BookingSlotDay[keyof typeof BookingSlotDay];
+
+function getSlotInputId(day: BookingSlotDayValue, time: string) {
+  return `${day}${time.replace(':', 'h')}m`;
+}
+
 function BookingPage(): JSX.Element {
   const {id} = useParams();
-  const quest = QUESTS.find((item) => item.id === id);
-  const [selectedPlaceId, setSelectedPlaceId] = useState(BOOKING_PLACES[0].id);
-  const selectedPlace = BOOKING_PLACES.find((place) => place.id === selectedPlaceId) ?? BOOKING_PLACES[0];
+  const dispatch = useAppDispatch();
+  const quest = useAppSelector(getCurrentQuest);
+  const isQuestLoading = useAppSelector(getQuestLoadingStatus);
+  const bookingPlaces = useAppSelector(getBookingPlaces);
+  const isBookingPlacesLoading = useAppSelector(getBookingPlacesLoadingStatus);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchQuestAction(id));
+      dispatch(fetchBookingPlacesAction(id));
+    }
+  }, [dispatch, id]);
+
+  if (!id) {
+    return <Navigate to={AppRoute.NotFound} replace />;
+  }
+
+  if (isQuestLoading || isBookingPlacesLoading) {
+    return (
+      <main className="page-content">
+        <div className="container">
+          <p>Загрузка бронирования...</p>
+        </div>
+      </main>
+    );
+  }
 
   if (!quest) {
     return <Navigate to={AppRoute.NotFound} replace />;
   }
+
+  if (bookingPlaces.length === 0) {
+    return (
+      <main className="page-content">
+        <div className="container">
+          <p>Места бронирования не найдены.</p>
+        </div>
+      </main>
+    );
+  }
+
+  const selectedPlace = bookingPlaces.find((place) => place.id === selectedPlaceId) ?? bookingPlaces[0];
 
   return (
     <main className="page-content decorated-page">
@@ -52,7 +115,7 @@ function BookingPage(): JSX.Element {
               <Map
                 center={selectedPlace.location}
                 zoom={BOOKING_MAP_ZOOM}
-                points={BOOKING_PLACES}
+                points={bookingPlaces}
                 activePointId={selectedPlace.id}
                 onPointClick={setSelectedPlaceId}
               />
@@ -64,61 +127,34 @@ function BookingPage(): JSX.Element {
         </div>
 
         <form className="booking-form" action="#" method="post">
-          <fieldset className="booking-form__section">
-            <legend className="visually-hidden">Выбор даты и времени</legend>
+          <legend className="visually-hidden">Выбор даты и времени</legend>
 
-            <fieldset className="booking-form__date-section">
-              <legend className="booking-form__date-title">Сегодня</legend>
+          {Object.values(BookingSlotDay).map((day) => (
+            <fieldset className="booking-form__date-section" key={day}>
+              <legend className="booking-form__date-title">
+                {BOOKING_SLOT_DAY_LABEL[day]}
+              </legend>
               <div className="booking-form__date-inner-wrapper">
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="today9h45m" name="date" required value="today9h45m" />
-                  <span className="custom-radio__label">9:45</span>
-                </label>
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="today15h00m" name="date" required value="today15h00m" defaultChecked />
-                  <span className="custom-radio__label">15:00</span>
-                </label>
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="today17h30m" name="date" required value="today17h30m" />
-                  <span className="custom-radio__label">17:30</span>
-                </label>
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="today19h30m" name="date" required value="today19h30m" disabled />
-                  <span className="custom-radio__label">19:30</span>
-                </label>
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="today21h30m" name="date" required value="today21h30m" />
-                  <span className="custom-radio__label">21:30</span>
-                </label>
+                {selectedPlace.slots[day].map((slot) => {
+                  const slotInputId = getSlotInputId(day, slot.time);
+
+                  return (
+                    <label className="custom-radio booking-form__date" key={slotInputId}>
+                      <input
+                        type="radio"
+                        id={slotInputId}
+                        name="date"
+                        required
+                        value={slotInputId}
+                        disabled={!slot.isAvailable}
+                      />
+                      <span className="custom-radio__label">{slot.time}</span>
+                    </label>
+                  );
+                })}
               </div>
             </fieldset>
-
-            <fieldset className="booking-form__date-section">
-              <legend className="booking-form__date-title">Завтра</legend>
-              <div className="booking-form__date-inner-wrapper">
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="tomorrow11h00m" name="date" required value="tomorrow11h00m" />
-                  <span className="custom-radio__label">11:00</span>
-                </label>
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="tomorrow15h00m" name="date" required value="tomorrow15h00m" disabled />
-                  <span className="custom-radio__label">15:00</span>
-                </label>
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="tomorrow17h30m" name="date" required value="tomorrow17h30m" disabled />
-                  <span className="custom-radio__label">17:30</span>
-                </label>
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="tomorrow19h45m" name="date" required value="tomorrow19h45m" />
-                  <span className="custom-radio__label">19:45</span>
-                </label>
-                <label className="custom-radio booking-form__date">
-                  <input type="radio" id="tomorrow21h30m" name="date" required value="tomorrow21h30m" />
-                  <span className="custom-radio__label">21:30</span>
-                </label>
-              </div>
-            </fieldset>
-          </fieldset>
+          ))}
 
           <fieldset className="booking-form__section">
             <legend className="visually-hidden">Контактная информация</legend>
