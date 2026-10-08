@@ -27,7 +27,7 @@ const QuestLevel = {
   Hard: 'hard',
 } as const;
 
-const QUEST_TYPE_LABEL = {
+const QUEST_TYPE_LABEL: Record<QuestCategoryValue, string> = {
   [QuestType.Adventures]: 'Приключения',
   [QuestType.Horror]: 'Ужасы',
   [QuestType.Mystic]: 'Мистика',
@@ -35,7 +35,7 @@ const QUEST_TYPE_LABEL = {
   [QuestType.SciFi]: 'Sci-fi',
 } as const;
 
-const QUEST_LEVEL_LABEL = {
+const QUEST_LEVEL_LABEL: Record<QuestDifficultyValue, string> = {
   [QuestLevel.Easy]: 'Лёгкий',
   [QuestLevel.Medium]: 'Средний',
   [QuestLevel.Hard]: 'Сложный',
@@ -103,6 +103,8 @@ const AUTHORIZATION_STATUS_KEY = 'escape-room-authorization-status';
 
 type QuestTypeValue = typeof QuestType[keyof typeof QuestType];
 type QuestLevelValue = typeof QuestLevel[keyof typeof QuestLevel];
+type QuestCategoryValue = Exclude<QuestTypeValue, typeof QuestType.All>;
+type QuestDifficultyValue = Exclude<QuestLevelValue, typeof QuestLevel.Any>;
 
 export {
   AppRoute,
@@ -117,4 +119,9 @@ export {
   REQUEST_TIMEOUT,
 };
 
-export type {QuestLevelValue, QuestTypeValue};
+export type {
+  QuestCategoryValue,
+  QuestDifficultyValue,
+  QuestLevelValue,
+  QuestTypeValue,
+};

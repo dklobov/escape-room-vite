@@ -1,12 +1,12 @@
-import type {QuestLevelValue, QuestTypeValue} from '../const';
+import type {QuestCategoryValue, QuestDifficultyValue} from '../const';
 
 type QuestPreviewDto = {
   id: string;
   title: string;
   previewImg: string;
   previewImgWebp: string;
-  level: QuestLevelValue;
-  type: QuestTypeValue;
+  level: QuestDifficultyValue;
+  type: QuestCategoryValue;
   peopleMinMax: [number, number];
 };
 
