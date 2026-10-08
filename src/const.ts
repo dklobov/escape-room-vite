@@ -9,6 +9,7 @@ const AppRoute = {
 } as const;
 
 const ApiRoute = {
+  Quest: '/quest',
   Quests: '/quest',
 } as const;
 
