@@ -10,6 +10,7 @@ const AppRoute = {
 } as const;
 
 const ApiRoute = {
+  Booking: 'booking',
   Quest: '/quest',
   Quests: '/quest',
 } as const;

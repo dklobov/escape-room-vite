@@ -1,10 +1,16 @@
 import {ApiRoute} from '../const';
+import {adaptBookingPlaceToClient} from '../adapters/booking';
 import {
   adaptQuestPreviewToClient,
   adaptQuestToClient,
 } from '../adapters/quest';
 import type {AppThunkAction} from '../types/action';
+import type {BookingPlaceDto} from '../types/booking-dto';
 import type {QuestDto, QuestPreviewDto} from '../types/quest-dto';
+import {
+  setBookingPlaces,
+  setBookingPlacesLoadingStatus,
+} from './booking-process/booking-process';
 import {
   setCurrentQuest,
   setQuestLoadingStatus,
@@ -47,7 +53,26 @@ function fetchQuestAction(id: string): AppThunkAction {
   };
 }
 
+function fetchBookingPlacesAction(id: string): AppThunkAction {
+  return async (dispatch, _getState, api) => {
+    dispatch(setBookingPlacesLoadingStatus(true));
+    dispatch(setBookingPlaces([]));
+
+    try {
+      const {data} = await api.get<BookingPlaceDto[]>(`${ApiRoute.Quest}/${id}/${ApiRoute.Booking}`);
+      const bookingPlaces = data.map((place) => adaptBookingPlaceToClient(place));
+
+      dispatch(setBookingPlaces(bookingPlaces));
+    } catch {
+      dispatch(setBookingPlaces([]));
+    } finally {
+      dispatch(setBookingPlacesLoadingStatus(false));
+    }
+  };
+}
+
 export {
+  fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,
 };
