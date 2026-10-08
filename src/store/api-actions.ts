@@ -11,11 +11,16 @@ function fetchQuestsAction(): AppThunkAction {
   return async (dispatch, _getState, api) => {
     dispatch(setQuestsLoadingStatus(true));
 
-    const {data} = await api.get<QuestPreviewDto[]>(ApiRoute.Quests);
-    const quests = data.map((quest) => adaptQuestPreviewToClient(quest));
+    try {
+      const {data} = await api.get<QuestPreviewDto[]>(ApiRoute.Quests);
+      const quests = data.map((quest) => adaptQuestPreviewToClient(quest));
 
-    dispatch(setQuests(quests));
-    dispatch(setQuestsLoadingStatus(false));
+      dispatch(setQuests(quests));
+    } catch {
+      dispatch(setQuests([]));
+    } finally {
+      dispatch(setQuestsLoadingStatus(false));
+    }
   };
 }
 
