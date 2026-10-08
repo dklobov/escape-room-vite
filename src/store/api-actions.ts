@@ -1,12 +1,23 @@
-import {ApiRoute} from '../const';
+import {
+  ApiRoute,
+  AuthorizationStatus,
+} from '../const';
 import {adaptBookingPlaceToClient} from '../adapters/booking';
 import {
   adaptQuestPreviewToClient,
   adaptQuestToClient,
 } from '../adapters/quest';
+import {
+  dropToken,
+  saveToken,
+} from '../services/token';
 import type {AppThunkAction} from '../types/action';
 import type {BookingPlaceDto} from '../types/booking-dto';
 import type {QuestDto, QuestPreviewDto} from '../types/quest-dto';
+import type {
+  LoginRequestDto,
+  LoginResponseDto,
+} from '../types/user-dto';
 import {
   setBookingPlaces,
   setBookingPlacesLoadingStatus,
@@ -17,6 +28,10 @@ import {
   setQuests,
   setQuestsLoadingStatus,
 } from './quests-process/quests-process';
+import {
+  setAuthorizationStatus,
+  setUserEmail,
+} from './user-process/user-process';
 
 function fetchQuestsAction(): AppThunkAction {
   return async (dispatch, _getState, api) => {
@@ -71,8 +86,25 @@ function fetchBookingPlacesAction(id: string): AppThunkAction {
   };
 }
 
+function loginAction(credentials: LoginRequestDto): AppThunkAction {
+  return async (dispatch, _getState, api) => {
+    try {
+      const {data} = await api.post<LoginResponseDto>(ApiRoute.Login, credentials);
+
+      saveToken(data.token);
+      dispatch(setUserEmail(data.email));
+      dispatch(setAuthorizationStatus(AuthorizationStatus.Authorized));
+    } catch {
+      dropToken();
+      dispatch(setUserEmail(''));
+      dispatch(setAuthorizationStatus(AuthorizationStatus.Unauthorized));
+    }
+  };
+}
+
 export {
   fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,
+  loginAction,
 };
