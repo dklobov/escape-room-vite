@@ -8,6 +8,10 @@ const AppRoute = {
   NotFound: '*',
 } as const;
 
+const ApiRoute = {
+  Quests: '/quest',
+} as const;
+
 const BASE_URL = 'https://grading.design.htmlacademy.pro/v1/escape-room';
 const REQUEST_TIMEOUT = 5000;
 
@@ -107,6 +111,7 @@ type QuestCategoryValue = Exclude<QuestTypeValue, typeof QuestType.All>;
 type QuestDifficultyValue = Exclude<QuestLevelValue, typeof QuestLevel.Any>;
 
 export {
+  ApiRoute,
   AppRoute,
   AUTHORIZATION_STATUS_KEY,
   BASE_URL,
