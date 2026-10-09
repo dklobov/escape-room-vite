@@ -85,7 +85,7 @@ function LoginPage({onLoginSubmit}: LoginPageProps): JSX.Element {
               </span>
               <span className="custom-checkbox__label">
                 Я согласен с{' '}
-                <a className="link link--active-silver link--underlined" href="#todo">
+                <a className="link link--active-silver link--underlined" href="#">
                   правилами обработки персональных данных
                 </a>{' '}
                 и пользовательским соглашением

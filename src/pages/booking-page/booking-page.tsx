@@ -151,8 +151,10 @@ function BookingPage(): JSX.Element {
     try {
       await dispatch(postBookingAction(id, booking));
       navigate(AppRoute.MyQuests);
-    } catch {
-      // Ошибку отправки покажем отдельным UI-состоянием позже.
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
     }
   };
 
@@ -321,7 +323,7 @@ function BookingPage(): JSX.Element {
             </span>
             <span className="custom-checkbox__label">
               Я согласен с{' '}
-              <a className="link link--active-silver link--underlined" href="#todo">
+              <a className="link link--active-silver link--underlined" href="#">
                 правилами обработки персональных данных
               </a>{' '}
               и пользовательским соглашением
