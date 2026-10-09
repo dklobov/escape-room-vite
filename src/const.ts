@@ -14,6 +14,7 @@ const ApiRoute = {
   Login: '/login',
   Quest: '/quest',
   Quests: '/quest',
+  Reservation: '/reservation',
 } as const;
 
 const BASE_URL = 'https://grading.design.htmlacademy.pro/v1/escape-room';

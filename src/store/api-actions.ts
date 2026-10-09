@@ -7,6 +7,7 @@ import {
   adaptQuestPreviewToClient,
   adaptQuestToClient,
 } from '../adapters/quest';
+import {adaptReservationToClient} from '../adapters/reservation';
 import {
   dropToken,
   saveToken,
@@ -32,6 +33,10 @@ import {
   setQuests,
   setQuestsLoadingStatus,
 } from './quests-process/quests-process';
+import {
+  setReservations,
+  setReservationsLoadingStatus,
+} from './reservations-process/reservations-process';
 import {
   setAuthorizationStatus,
   setUserEmail,
@@ -115,10 +120,28 @@ function postBookingAction(questId: string, booking: BookingRequestDto): AppThun
   };
 }
 
+function fetchReservationsAction(): AppThunkAction {
+  return async (dispatch, _getState, api) => {
+    dispatch(setReservationsLoadingStatus(true));
+
+    try {
+      const {data} = await api.get<BookingDto[]>(ApiRoute.Reservation);
+      const reservations = data.map((reservation) => adaptReservationToClient(reservation));
+
+      dispatch(setReservations(reservations));
+    } catch {
+      dispatch(setReservations([]));
+    } finally {
+      dispatch(setReservationsLoadingStatus(false));
+    }
+  };
+}
+
 export {
   fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,
+  fetchReservationsAction,
   loginAction,
   postBookingAction,
 };
