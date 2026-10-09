@@ -8,12 +8,20 @@ import {describe, expect, it} from 'vitest';
 import {ApiRoute} from '../const';
 import {createApi} from '../services/api';
 import type {State} from '.';
-import {fetchQuestsAction} from './api-actions';
 import {
+  fetchQuestAction,
+  fetchQuestsAction,
+} from './api-actions';
+import {
+  setCurrentQuest,
+  setQuestLoadingStatus,
   setQuests,
   setQuestsLoadingStatus,
 } from './quests-process/quests-process';
-import type {QuestPreviewDto} from '../types/quest-dto';
+import type {
+  QuestDto,
+  QuestPreviewDto,
+} from '../types/quest-dto';
 
 type AppDispatch = ThunkDispatch<State, ReturnType<typeof createApi>, Action>;
 
@@ -58,6 +66,50 @@ describe('Api actions', () => {
         },
       ]),
       setQuestsLoadingStatus(false),
+    ]);
+  });
+
+  it('should dispatch setCurrentQuest when GET /quest/:id returns data', async () => {
+    const questDto: QuestDto = {
+      id: 'quest-id',
+      title: 'Маньяк',
+      description: 'Описание квеста',
+      previewImg: 'preview.jpg',
+      previewImgWebp: 'preview.webp',
+      coverImg: 'cover.jpg',
+      coverImgWebp: 'cover.webp',
+      level: 'medium',
+      type: 'horror',
+      peopleMinMax: [3, 6],
+    };
+
+    mockApi.onGet(`${ApiRoute.Quest}/${questDto.id}`).reply(200, questDto);
+
+    const store = mockStoreCreator();
+
+    await store.dispatch(fetchQuestAction(questDto.id));
+
+    expect(store.getActions()).toEqual([
+      setQuestLoadingStatus(true),
+      setCurrentQuest(null),
+      setCurrentQuest({
+        id: 'quest-id',
+        title: 'Маньяк',
+        type: 'horror',
+        typeLabel: 'Ужасы',
+        description: 'Описание квеста',
+        previewImg: 'preview.jpg',
+        previewImgWebp: 'preview.webp',
+        previewImgAlt: 'Изображение квеста Маньяк',
+        coverImg: 'cover.jpg',
+        coverImgWebp: 'cover.webp',
+        coverImgAlt: 'Обложка квеста Маньяк',
+        level: 'medium',
+        levelLabel: 'Средний',
+        peopleMinCount: 3,
+        peopleMaxCount: 6,
+      }),
+      setQuestLoadingStatus(false),
     ]);
   });
 });
