@@ -1,3 +1,5 @@
+import type {Quest} from './quest';
+
 type BookingSlot = {
   time: string;
   isAvailable: boolean;
@@ -19,7 +21,16 @@ type BookingPlace = {
   slots: BookingSlots;
 };
 
+type Booking = {
+  id: string;
+  quest: Quest;
+  date: string;
+  time: string;
+  address: string;
+};
+
 export type {
+  Booking,
   BookingPlace,
   BookingSlot,
   BookingSlots,

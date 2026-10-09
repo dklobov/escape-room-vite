@@ -1,13 +1,6 @@
+import type {Booking} from '../types/booking';
 import type {Quest} from './quests';
 import {QUESTS} from './quests';
-
-type Booking = {
-  id: string;
-  quest: Quest;
-  date: string;
-  time: string;
-  address: string;
-};
 
 const BOOKINGS: Booking[] = [
   {

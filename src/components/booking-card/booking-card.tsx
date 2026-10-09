@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 
-import type {Booking} from '../../mocks/bookings';
+import type {Booking} from '../../types/booking';
 
 type BookingCardProps = {
   booking: Booking;
