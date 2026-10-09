@@ -1,7 +1,22 @@
+import {useEffect} from 'react';
+
 import BookingCard from '../../components/booking-card/booking-card';
-import {BOOKINGS} from '../../mocks/bookings';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {fetchReservationsAction} from '../../store/api-actions';
+import {
+  getReservations,
+  getReservationsLoadingStatus,
+} from '../../store/reservations-process/selectors';
 
 function MyQuestsPage(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const reservations = useAppSelector(getReservations);
+  const isReservationsLoading = useAppSelector(getReservationsLoadingStatus);
+
+  useEffect(() => {
+    dispatch(fetchReservationsAction());
+  }, [dispatch]);
+
   return (
     <main className="page-content decorated-page">
       <div className="decorated-page__decor" aria-hidden="true">
@@ -27,11 +42,21 @@ function MyQuestsPage(): JSX.Element {
           </h1>
         </div>
 
-        <div className="cards-grid">
-          {BOOKINGS.map((booking) => (
-            <BookingCard key={booking.id} booking={booking} />
-          ))}
-        </div>
+        {isReservationsLoading && (
+          <p>Загрузка бронирований...</p>
+        )}
+
+        {!isReservationsLoading && reservations.length === 0 && (
+          <p>Бронирования не найдены.</p>
+        )}
+
+        {!isReservationsLoading && reservations.length > 0 && (
+          <div className="cards-grid">
+            {reservations.map((booking) => (
+              <BookingCard key={booking.id} booking={booking} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
