@@ -4,9 +4,10 @@ import type {Booking} from '../../types/booking';
 
 type BookingCardProps = {
   booking: Booking;
+  onCancelButtonClick: (bookingId: string) => void;
 };
 
-function BookingCard({booking}: BookingCardProps): JSX.Element {
+function BookingCard({booking, onCancelButtonClick}: BookingCardProps): JSX.Element {
   const {quest, date, time, address} = booking;
 
   return (
@@ -43,7 +44,11 @@ function BookingCard({booking}: BookingCardProps): JSX.Element {
           </li>
         </ul>
 
-        <button className="btn btn--accent btn--secondary quest-card__btn" type="button">
+        <button
+          className="btn btn--accent btn--secondary quest-card__btn"
+          type="button"
+          onClick={() => onCancelButtonClick(booking.id)}
+        >
           Отменить
         </button>
       </div>

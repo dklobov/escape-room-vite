@@ -20,6 +20,9 @@ const reservationsProcess = createSlice({
     setReservations: (state, action: PayloadAction<Booking[]>) => {
       state.reservations = action.payload;
     },
+    removeReservation: (state, action: PayloadAction<string>) => {
+      state.reservations = state.reservations.filter((reservation) => reservation.id !== action.payload);
+    },
     setReservationsLoadingStatus: (state, action: PayloadAction<boolean>) => {
       state.isReservationsLoading = action.payload;
     },
@@ -27,11 +30,13 @@ const reservationsProcess = createSlice({
 });
 
 const {
+  removeReservation,
   setReservations,
   setReservationsLoadingStatus,
 } = reservationsProcess.actions;
 
 export {
+  removeReservation,
   reservationsProcess,
   setReservations,
   setReservationsLoadingStatus,

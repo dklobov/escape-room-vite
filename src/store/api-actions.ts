@@ -34,6 +34,7 @@ import {
   setQuestsLoadingStatus,
 } from './quests-process/quests-process';
 import {
+  removeReservation,
   setReservations,
   setReservationsLoadingStatus,
 } from './reservations-process/reservations-process';
@@ -137,7 +138,15 @@ function fetchReservationsAction(): AppThunkAction {
   };
 }
 
+function deleteReservationAction(reservationId: string): AppThunkAction {
+  return async (dispatch, _getState, api) => {
+    await api.delete(`${ApiRoute.Reservation}/${reservationId}`);
+    dispatch(removeReservation(reservationId));
+  };
+}
+
 export {
+  deleteReservationAction,
   fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,

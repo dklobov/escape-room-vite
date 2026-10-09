@@ -2,7 +2,10 @@ import {useEffect} from 'react';
 
 import BookingCard from '../../components/booking-card/booking-card';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {fetchReservationsAction} from '../../store/api-actions';
+import {
+  deleteReservationAction,
+  fetchReservationsAction,
+} from '../../store/api-actions';
 import {
   getReservations,
   getReservationsLoadingStatus,
@@ -16,6 +19,10 @@ function MyQuestsPage(): JSX.Element {
   useEffect(() => {
     dispatch(fetchReservationsAction());
   }, [dispatch]);
+
+  const handleBookingCancelButtonClick = (bookingId: string) => {
+    void dispatch(deleteReservationAction(bookingId));
+  };
 
   return (
     <main className="page-content decorated-page">
@@ -53,7 +60,11 @@ function MyQuestsPage(): JSX.Element {
         {!isReservationsLoading && reservations.length > 0 && (
           <div className="cards-grid">
             {reservations.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
+              <BookingCard
+                key={booking.id}
+                booking={booking}
+                onCancelButtonClick={handleBookingCancelButtonClick}
+              />
             ))}
           </div>
         )}
