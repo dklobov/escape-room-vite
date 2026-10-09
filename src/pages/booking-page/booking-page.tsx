@@ -1,5 +1,9 @@
 import {useEffect, useState} from 'react';
-import {Navigate, useParams} from 'react-router-dom';
+import {
+  Navigate,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import {useForm} from 'react-hook-form';
 
 import Map from '../../components/map/map';
@@ -8,6 +12,7 @@ import {useAppDispatch, useAppSelector} from '../../hooks';
 import {
   fetchBookingPlacesAction,
   fetchQuestAction,
+  postBookingAction,
 } from '../../store/api-actions';
 import {
   getBookingPlaces,
@@ -17,8 +22,10 @@ import {
   getCurrentQuest,
   getQuestLoadingStatus,
 } from '../../store/quests-process/selectors';
+import type {BookingRequestDto} from '../../types/booking-dto';
 
 const BOOKING_MAP_ZOOM = 11;
+const BOOKING_SLOT_VALUE_SEPARATOR = '|';
 const NAME_MIN_LENGTH = 1;
 const NAME_MAX_LENGTH = 15;
 const PHONE_PATTERN = /^\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
@@ -48,9 +55,31 @@ function getSlotInputId(day: BookingSlotDayValue, time: string) {
   return `${day}${time.replace(':', 'h')}m`;
 }
 
+function getSlotInputValue(day: BookingSlotDayValue, time: string) {
+  return `${day}${BOOKING_SLOT_VALUE_SEPARATOR}${time}`;
+}
+
+function isBookingSlotDay(value: string): value is BookingSlotDayValue {
+  return Object.values(BookingSlotDay).some((day) => day === value);
+}
+
+function parseBookingSlotValue(value: string) {
+  const [date, time] = value.split(BOOKING_SLOT_VALUE_SEPARATOR);
+
+  if (!date || !time || !isBookingSlotDay(date)) {
+    return null;
+  }
+
+  return {
+    date,
+    time,
+  };
+}
+
 function BookingPage(): JSX.Element {
   const {id} = useParams();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const quest = useAppSelector(getCurrentQuest);
   const isQuestLoading = useAppSelector(getQuestLoadingStatus);
   const bookingPlaces = useAppSelector(getBookingPlaces);
@@ -60,7 +89,11 @@ function BookingPage(): JSX.Element {
     formState: {errors},
     handleSubmit,
     register,
-  } = useForm<BookingFormData>();
+  } = useForm<BookingFormData>({
+    defaultValues: {
+      children: true,
+    },
+  });
 
   useEffect(() => {
     if (id) {
@@ -68,10 +101,6 @@ function BookingPage(): JSX.Element {
       dispatch(fetchBookingPlacesAction(id));
     }
   }, [dispatch, id]);
-
-  const handleBookingSubmit = () => {
-    // Отправку на сервер подключим отдельным шагом после подготовки API-типа.
-  };
 
   if (!id) {
     return <Navigate to={AppRoute.NotFound} replace />;
@@ -102,6 +131,30 @@ function BookingPage(): JSX.Element {
   }
 
   const selectedPlace = bookingPlaces.find((place) => place.id === selectedPlaceId) ?? bookingPlaces[0];
+  const handleBookingSubmit = async (data: BookingFormData) => {
+    const bookingSlot = parseBookingSlotValue(data.date);
+
+    if (!bookingSlot) {
+      return;
+    }
+
+    const booking: BookingRequestDto = {
+      date: bookingSlot.date,
+      time: bookingSlot.time,
+      contactPerson: data.name,
+      phone: data.tel,
+      withChildren: data.children,
+      peopleCount: data.person,
+      placeId: selectedPlace.id,
+    };
+
+    try {
+      await dispatch(postBookingAction(id, booking));
+      navigate(AppRoute.MyQuests);
+    } catch {
+      // Ошибку отправки покажем отдельным UI-состоянием позже.
+    }
+  };
 
   return (
     <main className="page-content decorated-page">
@@ -167,13 +220,14 @@ function BookingPage(): JSX.Element {
                 <div className="booking-form__date-inner-wrapper">
                   {selectedPlace.slots[day].map((slot) => {
                     const slotInputId = getSlotInputId(day, slot.time);
+                    const slotInputValue = getSlotInputValue(day, slot.time);
 
                     return (
                       <label className={`custom-radio booking-form__date ${errors.date ? 'is-invalid' : ''}`} key={slotInputId}>
                         <input
                           type="radio"
                           id={slotInputId}
-                          value={slotInputId}
+                          value={slotInputValue}
                           disabled={!slot.isAvailable}
                           {...register('date', {
                             required: true,
@@ -237,7 +291,6 @@ function BookingPage(): JSX.Element {
               <input
                 type="checkbox"
                 id="children"
-                defaultChecked
                 {...register('children')}
               />
               <span className="custom-checkbox__icon">
