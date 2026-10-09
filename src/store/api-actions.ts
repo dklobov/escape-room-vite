@@ -12,7 +12,11 @@ import {
   saveToken,
 } from '../services/token';
 import type {AppThunkAction} from '../types/action';
-import type {BookingPlaceDto} from '../types/booking-dto';
+import type {
+  BookingDto,
+  BookingPlaceDto,
+  BookingRequestDto,
+} from '../types/booking-dto';
 import type {QuestDto, QuestPreviewDto} from '../types/quest-dto';
 import type {
   LoginRequestDto,
@@ -102,9 +106,19 @@ function loginAction(credentials: LoginRequestDto): AppThunkAction {
   };
 }
 
+function postBookingAction(questId: string, booking: BookingRequestDto): AppThunkAction {
+  return async (_dispatch, _getState, api) => {
+    await api.post<BookingDto>(
+      `${ApiRoute.Quest}/${questId}/${ApiRoute.Booking}`,
+      booking
+    );
+  };
+}
+
 export {
   fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,
   loginAction,
+  postBookingAction,
 };
