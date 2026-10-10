@@ -1,4 +1,4 @@
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {describe, expect, it} from 'vitest';
 
@@ -102,13 +102,17 @@ describe('Page: MainPage', () => {
 
     await user.click(screen.getByLabelText('Ужасы'));
 
-    expect(screen.getByRole('link', {name: 'Склеп'})).toBeInTheDocument();
-    expect(screen.getByRole('link', {name: 'Маньяк'})).toBeInTheDocument();
-    expect(screen.queryByRole('link', {name: 'Ритуал'})).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('link', {name: 'Склеп'})).toBeInTheDocument();
+      expect(screen.getByRole('link', {name: 'Маньяк'})).toBeInTheDocument();
+      expect(screen.queryByRole('link', {name: 'Ритуал'})).not.toBeInTheDocument();
+    });
 
     await user.click(screen.getByLabelText('Сложный'));
 
-    expect(screen.getByRole('link', {name: 'Склеп'})).toBeInTheDocument();
-    expect(screen.queryByRole('link', {name: 'Маньяк'})).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole('link', {name: 'Склеп'})).toBeInTheDocument();
+      expect(screen.queryByRole('link', {name: 'Маньяк'})).not.toBeInTheDocument();
+    });
   });
 });
