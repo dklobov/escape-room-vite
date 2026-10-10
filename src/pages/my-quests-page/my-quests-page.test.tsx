@@ -30,18 +30,16 @@ const booking: Booking = {
   date: 'сегодня',
   time: '14:00',
   address: 'Набережная реки Карповки, 5П',
+  peopleCount: 3,
+  withChildren: true,
   quest: {
     id: 'quest-id',
     title: 'Склеп',
     type: QuestType.Horror,
     typeLabel: 'Ужасы',
-    description: 'Описание квеста Склеп',
     previewImg: 'crypt.jpg',
     previewImgWebp: 'crypt.webp',
     previewImgAlt: 'Квест Склеп',
-    coverImg: 'crypt-cover.jpg',
-    coverImgWebp: 'crypt-cover.webp',
-    coverImgAlt: 'Обложка квеста Склеп',
     level: QuestLevel.Hard,
     levelLabel: 'Сложный',
     peopleMinCount: 2,
@@ -92,6 +90,7 @@ describe('Page: MyQuestsPage', () => {
 
     expect(screen.getByRole('link', {name: 'Склеп'})).toHaveAttribute('href', '/quest/quest-id');
     expect(screen.getByText(/Набережная реки Карповки, 5П/i)).toBeInTheDocument();
+    expect(screen.getByText(/3\sчел/i)).toBeInTheDocument();
     expect(screen.getByText('Сложный')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', {name: 'Отменить'}));

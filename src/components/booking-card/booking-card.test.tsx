@@ -11,18 +11,16 @@ const booking: Booking = {
   date: 'сегодня',
   time: '14:00',
   address: 'Набережная реки Карповки, 5П',
+  peopleCount: 3,
+  withChildren: true,
   quest: {
     id: 'quest-id',
     title: 'Склеп',
     type: 'horror',
     typeLabel: 'Ужасы',
-    description: '',
     previewImg: 'crypt.jpg',
     previewImgWebp: 'crypt.webp',
     previewImgAlt: 'Квест Склеп',
-    coverImg: '',
-    coverImgWebp: '',
-    coverImgAlt: 'Квест Склеп',
     level: 'hard',
     levelLabel: 'Сложный',
     peopleMinCount: 2,
@@ -51,7 +49,7 @@ describe('Component: BookingCard', () => {
     expect(screen.getByAltText('Квест Склеп')).toHaveAttribute('src', 'crypt.jpg');
     expect(screen.getByText(/\[сегодня,\s14:00\./i)).toBeInTheDocument();
     expect(screen.getByText(/Набережная реки Карповки, 5П/i)).toBeInTheDocument();
-    expect(screen.getByText(/5\sчел/i)).toBeInTheDocument();
+    expect(screen.getByText(/3\sчел/i)).toBeInTheDocument();
     expect(screen.getByText('Сложный')).toBeInTheDocument();
 
     await user.click(cancelButton);

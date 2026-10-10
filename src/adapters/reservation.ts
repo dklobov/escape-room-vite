@@ -18,13 +18,9 @@ function adaptReservationToClient(reservation: BookingDto): Booking {
       title: reservation.quest.title,
       type: reservation.quest.type,
       typeLabel: QUEST_TYPE_LABEL[reservation.quest.type],
-      description: '',
       previewImg: reservation.quest.previewImg,
       previewImgWebp: reservation.quest.previewImgWebp,
       previewImgAlt: `Квест ${reservation.quest.title}`,
-      coverImg: '',
-      coverImgWebp: '',
-      coverImgAlt: `Квест ${reservation.quest.title}`,
       level: reservation.quest.level,
       levelLabel: QUEST_LEVEL_LABEL[reservation.quest.level],
       peopleMinCount: reservation.quest.peopleMinMax[0],
@@ -33,6 +29,8 @@ function adaptReservationToClient(reservation: BookingDto): Booking {
     date: RESERVATION_DATE_LABEL[reservation.date],
     time: reservation.time,
     address: reservation.location.address,
+    peopleCount: reservation.peopleCount,
+    withChildren: reservation.withChildren,
   };
 }
 

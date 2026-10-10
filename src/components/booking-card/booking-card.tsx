@@ -8,7 +8,7 @@ type BookingCardProps = {
 };
 
 function BookingCard({booking, onCancelButtonClick}: BookingCardProps): JSX.Element {
-  const {quest, date, time, address} = booking;
+  const {quest, date, time, address, peopleCount} = booking;
 
   return (
     <div className="quest-card">
@@ -34,7 +34,7 @@ function BookingCard({booking, onCancelButtonClick}: BookingCardProps): JSX.Elem
             <svg width="11" height="14" aria-hidden="true">
               <use xlinkHref="#icon-person"></use>
             </svg>
-            {quest.peopleMaxCount}&nbsp;чел
+            {peopleCount}&nbsp;чел
           </li>
           <li className="tags__item">
             <svg width="14" height="14" aria-hidden="true">
