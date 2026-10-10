@@ -13,6 +13,7 @@ import {
 import {createApi} from '../services/api';
 import type {State} from '.';
 import {
+  deleteReservationAction,
   fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,
@@ -30,6 +31,7 @@ import {
   setQuestsLoadingStatus,
 } from './quests-process/quests-process';
 import {
+  removeReservation,
   setReservations,
   setReservationsLoadingStatus,
 } from './reservations-process/reservations-process';
@@ -257,6 +259,7 @@ describe('Api actions', () => {
       setReservationsLoadingStatus(false),
     ]);
   });
+
   it('should dispatch user data and save token when POST /login returns data', async () => {
     const credentials: LoginRequestDto = {
       email: 'test-user@htmlacademy.ru',
@@ -278,5 +281,19 @@ describe('Api actions', () => {
       setAuthorizationStatus(AuthorizationStatus.Authorized),
     ]);
     expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBe(loginResponse.token);
+  });
+
+  it('should dispatch removeReservation when DELETE /reservation/:id succeeds', async () => {
+    const reservationId = 'reservation-id';
+
+    mockApi.onDelete(`${ApiRoute.Reservation}/${reservationId}`).reply(204);
+
+    const store = mockStoreCreator();
+
+    await store.dispatch(deleteReservationAction(reservationId));
+
+    expect(store.getActions()).toEqual([
+      removeReservation(reservationId),
+    ]);
   });
 });
