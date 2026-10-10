@@ -12,6 +12,7 @@ import {
   fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,
+  fetchReservationsAction,
 } from './api-actions';
 import {
   setBookingPlaces,
@@ -23,7 +24,14 @@ import {
   setQuests,
   setQuestsLoadingStatus,
 } from './quests-process/quests-process';
-import type {BookingPlaceDto} from '../types/booking-dto';
+import {
+  setReservations,
+  setReservationsLoadingStatus,
+} from './reservations-process/reservations-process';
+import type {
+  BookingDto,
+  BookingPlaceDto,
+} from '../types/booking-dto';
 import type {
   QuestDto,
   QuestPreviewDto,
@@ -167,6 +175,67 @@ describe('Api actions', () => {
         },
       ]),
       setBookingPlacesLoadingStatus(false),
+    ]);
+  });
+  it('should dispatch setReservations when GET /reservation returns data', async () => {
+    const bookingDto: BookingDto = {
+      id: 'booking-id',
+      date: 'today',
+      time: '14:00',
+      contactPerson: 'Oliver',
+      phone: '899911122233',
+      withChildren: true,
+      peopleCount: 3,
+      placeId: 'place-id',
+      location: {
+        address: 'Набережная реки Карповки, 5П',
+        coords: [59.96825, 30.31748],
+      },
+      quest: {
+        id: 'quest-id',
+        title: 'Склеп',
+        previewImg: 'preview.jpg',
+        previewImgWebp: 'preview.webp',
+        level: 'hard',
+        type: 'horror',
+        peopleMinMax: [2, 5],
+      },
+    };
+
+    mockApi.onGet(ApiRoute.Reservation).reply(200, [bookingDto]);
+
+    const store = mockStoreCreator();
+
+    await store.dispatch(fetchReservationsAction());
+
+    expect(store.getActions()).toEqual([
+      setReservationsLoadingStatus(true),
+      setReservations([
+        {
+          id: 'booking-id',
+          date: 'сегодня',
+          time: '14:00',
+          address: 'Набережная реки Карповки, 5П',
+          quest: {
+            id: 'quest-id',
+            title: 'Склеп',
+            type: 'horror',
+            typeLabel: 'Ужасы',
+            description: '',
+            previewImg: 'preview.jpg',
+            previewImgWebp: 'preview.webp',
+            previewImgAlt: 'Квест Склеп',
+            coverImg: '',
+            coverImgWebp: '',
+            coverImgAlt: 'Квест Склеп',
+            level: 'hard',
+            levelLabel: 'Сложный',
+            peopleMinCount: 2,
+            peopleMaxCount: 5,
+          },
+        },
+      ]),
+      setReservationsLoadingStatus(false),
     ]);
   });
 });
