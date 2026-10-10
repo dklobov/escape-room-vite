@@ -313,6 +313,10 @@ function BookingPage(): JSX.Element {
             </p>
           )}
 
+          <button className="btn btn--accent btn--cta booking-form__submit" type="submit">
+            Забронировать
+          </button>
+
           <label className={`custom-checkbox booking-form__checkbox booking-form__checkbox--agreement ${errors.agreement ? 'is-invalid' : ''}`}>
             <input
               type="checkbox"
