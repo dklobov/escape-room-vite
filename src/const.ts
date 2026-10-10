@@ -115,7 +115,6 @@ const QUEST_LEVEL_FILTERS = [
   },
 ] as const;
 
-const AUTHORIZATION_STATUS_KEY = 'escape-room-authorization-status';
 const AUTH_TOKEN_KEY = 'escape-room-token';
 
 type AuthorizationStatusValue = typeof AuthorizationStatus[keyof typeof AuthorizationStatus];
@@ -127,7 +126,6 @@ type QuestDifficultyValue = Exclude<QuestLevelValue, typeof QuestLevel.Any>;
 export {
   ApiRoute,
   AppRoute,
-  AUTHORIZATION_STATUS_KEY,
   AUTH_TOKEN_KEY,
   AuthorizationStatus,
   BASE_URL,
