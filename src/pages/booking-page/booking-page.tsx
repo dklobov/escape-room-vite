@@ -85,6 +85,10 @@ function BookingPage(): JSX.Element {
   const bookingPlaces = useAppSelector(getBookingPlaces);
   const isBookingPlacesLoading = useAppSelector(getBookingPlacesLoadingStatus);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  const handlePointClick = (pointId: string) => {
+    setSelectedPlaceId(pointId);
+  };
+  const [bookingSubmitError, setBookingSubmitError] = useState(false);
   const {
     formState: {errors},
     handleSubmit,
@@ -149,12 +153,11 @@ function BookingPage(): JSX.Element {
     };
 
     try {
+      setBookingSubmitError(false);
       await dispatch(postBookingAction(id, booking));
       navigate(AppRoute.MyQuests);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      }
+    } catch {
+      setBookingSubmitError(true);
     }
   };
 
@@ -194,7 +197,7 @@ function BookingPage(): JSX.Element {
                 zoom={BOOKING_MAP_ZOOM}
                 points={bookingPlaces}
                 activePointId={selectedPlace.id}
-                onPointClick={setSelectedPlaceId}
+                onPointClick={handlePointClick}
               />
             </div>
             <p className="booking-map__address">
@@ -304,9 +307,11 @@ function BookingPage(): JSX.Element {
             </label>
           </fieldset>
 
-          <button className="btn btn--accent btn--cta booking-form__submit" type="submit">
-            Забронировать
-          </button>
+          {bookingSubmitError && (
+            <p>
+              Не удалось забронировать квест. Попробуйте ещё раз.
+            </p>
+          )}
 
           <label className={`custom-checkbox booking-form__checkbox booking-form__checkbox--agreement ${errors.agreement ? 'is-invalid' : ''}`}>
             <input
