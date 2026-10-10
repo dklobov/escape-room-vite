@@ -3,9 +3,13 @@ import thunk from 'redux-thunk';
 import {configureMockStore} from '@jedmao/redux-mock-store';
 import type {Action} from 'redux';
 import type {ThunkDispatch} from 'redux-thunk';
-import {describe, expect, it} from 'vitest';
+import {beforeEach, describe, expect, it} from 'vitest';
 
-import {ApiRoute} from '../const';
+import {
+  ApiRoute,
+  AUTH_TOKEN_KEY,
+  AuthorizationStatus,
+} from '../const';
 import {createApi} from '../services/api';
 import type {State} from '.';
 import {
@@ -13,6 +17,7 @@ import {
   fetchQuestAction,
   fetchQuestsAction,
   fetchReservationsAction,
+  loginAction,
 } from './api-actions';
 import {
   setBookingPlaces,
@@ -28,6 +33,10 @@ import {
   setReservations,
   setReservationsLoadingStatus,
 } from './reservations-process/reservations-process';
+import {
+  setAuthorizationStatus,
+  setUserEmail,
+} from './user-process/user-process';
 import type {
   BookingDto,
   BookingPlaceDto,
@@ -36,6 +45,10 @@ import type {
   QuestDto,
   QuestPreviewDto,
 } from '../types/quest-dto';
+import type {
+  LoginRequestDto,
+  LoginResponseDto,
+} from '../types/user-dto';
 
 type AppDispatch = ThunkDispatch<State, ReturnType<typeof createApi>, Action>;
 
@@ -43,6 +56,11 @@ const api = createApi();
 const mockApi = new MockAdapter(api);
 const middlewares = [thunk.withExtraArgument(api)];
 const mockStoreCreator = configureMockStore<State, Action, AppDispatch>(middlewares);
+
+beforeEach(() => {
+  mockApi.reset();
+  localStorage.clear();
+});
 
 describe('Api actions', () => {
   it('should dispatch setQuests when GET /quest returns data', async () => {
@@ -177,6 +195,7 @@ describe('Api actions', () => {
       setBookingPlacesLoadingStatus(false),
     ]);
   });
+
   it('should dispatch setReservations when GET /reservation returns data', async () => {
     const bookingDto: BookingDto = {
       id: 'booking-id',
@@ -237,5 +256,27 @@ describe('Api actions', () => {
       ]),
       setReservationsLoadingStatus(false),
     ]);
+  });
+  it('should dispatch user data and save token when POST /login returns data', async () => {
+    const credentials: LoginRequestDto = {
+      email: 'test-user@htmlacademy.ru',
+      password: 'password1',
+    };
+    const loginResponse: LoginResponseDto = {
+      email: 'test-user@htmlacademy.ru',
+      token: 'token',
+    };
+
+    mockApi.onPost(ApiRoute.Login).reply(200, loginResponse);
+
+    const store = mockStoreCreator();
+
+    await store.dispatch(loginAction(credentials));
+
+    expect(store.getActions()).toEqual([
+      setUserEmail(loginResponse.email),
+      setAuthorizationStatus(AuthorizationStatus.Authorized),
+    ]);
+    expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBe(loginResponse.token);
   });
 });
