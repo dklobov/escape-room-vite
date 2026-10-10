@@ -9,15 +9,21 @@ import {ApiRoute} from '../const';
 import {createApi} from '../services/api';
 import type {State} from '.';
 import {
+  fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,
 } from './api-actions';
+import {
+  setBookingPlaces,
+  setBookingPlacesLoadingStatus,
+} from './booking-process/booking-process';
 import {
   setCurrentQuest,
   setQuestLoadingStatus,
   setQuests,
   setQuestsLoadingStatus,
 } from './quests-process/quests-process';
+import type {BookingPlaceDto} from '../types/booking-dto';
 import type {
   QuestDto,
   QuestPreviewDto,
@@ -110,6 +116,57 @@ describe('Api actions', () => {
         peopleMaxCount: 6,
       }),
       setQuestLoadingStatus(false),
+    ]);
+  });
+
+  it('should dispatch setBookingPlaces when GET /quest/:id/booking returns data', async () => {
+    const questId = 'quest-id';
+    const bookingPlaceDto: BookingPlaceDto = {
+      id: 'place-id',
+      location: {
+        address: 'Набережная реки Карповки, 5П',
+        coords: [59.96825, 30.31748],
+      },
+      slots: {
+        today: [
+          {
+            time: '14:00',
+            isAvailable: true,
+          },
+        ],
+        tomorrow: [
+          {
+            time: '20:00',
+            isAvailable: false,
+          },
+        ],
+      },
+    };
+
+    mockApi
+      .onGet(`${ApiRoute.Quest}/${questId}/${ApiRoute.Booking}`)
+      .reply(200, [bookingPlaceDto]);
+
+    const store = mockStoreCreator();
+
+    await store.dispatch(fetchBookingPlacesAction(questId));
+
+    expect(store.getActions()).toEqual([
+      setBookingPlacesLoadingStatus(true),
+      setBookingPlaces([]),
+      setBookingPlaces([
+        {
+          id: 'place-id',
+          title: 'Набережная реки Карповки, 5П',
+          address: 'Набережная реки Карповки, 5П',
+          location: {
+            lat: 59.96825,
+            lng: 30.31748,
+          },
+          slots: bookingPlaceDto.slots,
+        },
+      ]),
+      setBookingPlacesLoadingStatus(false),
     ]);
   });
 });
