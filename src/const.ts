@@ -12,6 +12,7 @@ const AppRoute = {
 const ApiRoute = {
   Booking: 'booking',
   Login: '/login',
+  Logout: '/logout',
   Quest: '/quest',
   Quests: '/quest',
   Reservation: '/reservation',

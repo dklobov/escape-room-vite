@@ -10,6 +10,7 @@ import {
 import {adaptReservationToClient} from '../adapters/reservation';
 import {
   dropToken,
+  getToken,
   saveToken,
 } from '../services/token';
 import type {AppThunkAction} from '../types/action';
@@ -96,6 +97,28 @@ function fetchBookingPlacesAction(id: string): AppThunkAction {
   };
 }
 
+function checkAuthAction(): AppThunkAction {
+  return async (dispatch, _getState, api) => {
+    if (!getToken()) {
+      dispatch(setUserEmail(''));
+      dispatch(setAuthorizationStatus(AuthorizationStatus.Unauthorized));
+      return;
+    }
+
+    try {
+      const {data} = await api.get<LoginResponseDto>(ApiRoute.Login);
+
+      saveToken(data.token);
+      dispatch(setUserEmail(data.email));
+      dispatch(setAuthorizationStatus(AuthorizationStatus.Authorized));
+    } catch {
+      dropToken();
+      dispatch(setUserEmail(''));
+      dispatch(setAuthorizationStatus(AuthorizationStatus.Unauthorized));
+    }
+  };
+}
+
 function loginAction(credentials: LoginRequestDto): AppThunkAction {
   return async (dispatch, _getState, api) => {
     try {
@@ -118,6 +141,18 @@ function postBookingAction(questId: string, booking: BookingRequestDto): AppThun
       `${ApiRoute.Quest}/${questId}/${ApiRoute.Booking}`,
       booking
     );
+  };
+}
+
+function logoutAction(): AppThunkAction {
+  return async (dispatch, _getState, api) => {
+    try {
+      await api.delete(ApiRoute.Logout);
+    } finally {
+      dropToken();
+      dispatch(setUserEmail(''));
+      dispatch(setAuthorizationStatus(AuthorizationStatus.Unauthorized));
+    }
   };
 }
 
@@ -146,11 +181,13 @@ function deleteReservationAction(reservationId: string): AppThunkAction {
 }
 
 export {
+  checkAuthAction,
   deleteReservationAction,
   fetchBookingPlacesAction,
   fetchQuestAction,
   fetchQuestsAction,
   fetchReservationsAction,
   loginAction,
+  logoutAction,
   postBookingAction,
 };

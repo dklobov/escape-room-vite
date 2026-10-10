@@ -14,15 +14,11 @@ import MyQuestsPage from '../../pages/my-quests-page/my-quests-page';
 import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import QuestPage from '../../pages/quest-page/quest-page';
 import {
-  dropToken,
-  getToken,
-} from '../../services/token';
-import {loginAction} from '../../store/api-actions';
+  checkAuthAction,
+  loginAction,
+  logoutAction,
+} from '../../store/api-actions';
 import {getAuthorizationStatus} from '../../store/user-process/selectors';
-import {
-  setAuthorizationStatus,
-  setUserEmail,
-} from '../../store/user-process/user-process';
 import type {LoginRequestDto} from '../../types/user-dto';
 import Layout from '../layout/layout';
 import PrivateRoute from '../private-route/private-route';
@@ -37,11 +33,7 @@ function App(): JSX.Element {
       return;
     }
 
-    dispatch(setAuthorizationStatus(
-      getToken()
-        ? AuthorizationStatus.Authorized
-        : AuthorizationStatus.Unauthorized
-    ));
+    void dispatch(checkAuthAction());
   }, [authorizationStatus, dispatch]);
 
   const handleLoginSubmit = (credentials: LoginRequestDto) => {
@@ -49,9 +41,7 @@ function App(): JSX.Element {
   };
 
   const handleLogoutButtonClick = () => {
-    dropToken();
-    dispatch(setUserEmail(''));
-    dispatch(setAuthorizationStatus(AuthorizationStatus.Unauthorized));
+    void dispatch(logoutAction());
   };
 
   return (

@@ -19,6 +19,8 @@ import {
   fetchQuestsAction,
   fetchReservationsAction,
   loginAction,
+  checkAuthAction,
+  logoutAction,
 } from './api-actions';
 import {
   setBookingPlaces,
@@ -242,18 +244,16 @@ describe('Api actions', () => {
             title: 'Склеп',
             type: 'horror',
             typeLabel: 'Ужасы',
-            description: '',
             previewImg: 'preview.jpg',
             previewImgWebp: 'preview.webp',
             previewImgAlt: 'Квест Склеп',
-            coverImg: '',
-            coverImgWebp: '',
-            coverImgAlt: 'Квест Склеп',
             level: 'hard',
             levelLabel: 'Сложный',
             peopleMinCount: 2,
             peopleMaxCount: 5,
           },
+          peopleCount: 3,
+          withChildren: true,
         },
       ]),
       setReservationsLoadingStatus(false),
@@ -281,6 +281,55 @@ describe('Api actions', () => {
       setAuthorizationStatus(AuthorizationStatus.Authorized),
     ]);
     expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBe(loginResponse.token);
+  });
+
+  it('should dispatch authorization actions when GET /login succeeds', async () => {
+    const loginResponse: LoginResponseDto = {
+      email: 'test@test.com',
+      token: 'token',
+    };
+    const store = mockStoreCreator();
+
+    localStorage.setItem(AUTH_TOKEN_KEY, 'token');
+    mockApi.onGet(ApiRoute.Login).reply(200, loginResponse);
+
+    await store.dispatch(checkAuthAction());
+
+    expect(store.getActions()).toEqual([
+      setUserEmail(loginResponse.email),
+      setAuthorizationStatus(AuthorizationStatus.Authorized),
+    ]);
+    expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBe(loginResponse.token);
+  });
+
+  it('should dispatch unauthorized status when GET /login fails', async () => {
+    const store = mockStoreCreator();
+
+    localStorage.setItem(AUTH_TOKEN_KEY, 'bad-token');
+    mockApi.onGet(ApiRoute.Login).reply(401);
+
+    await store.dispatch(checkAuthAction());
+
+    expect(store.getActions()).toEqual([
+      setUserEmail(''),
+      setAuthorizationStatus(AuthorizationStatus.Unauthorized),
+    ]);
+    expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBeNull();
+  });
+
+  it('should dispatch unauthorized status when DELETE /logout finishes', async () => {
+    const store = mockStoreCreator();
+
+    localStorage.setItem(AUTH_TOKEN_KEY, 'token');
+    mockApi.onDelete(ApiRoute.Logout).reply(204);
+
+    await store.dispatch(logoutAction());
+
+    expect(store.getActions()).toEqual([
+      setUserEmail(''),
+      setAuthorizationStatus(AuthorizationStatus.Unauthorized),
+    ]);
+    expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBeNull();
   });
 
   it('should dispatch removeReservation when DELETE /reservation/:id succeeds', async () => {
