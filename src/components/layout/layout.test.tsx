@@ -27,5 +27,7 @@ describe('Component: Layout', () => {
     expect(screen.getByRole('link', {name: 'Квесты'})).toBeInTheDocument();
     expect(screen.getByRole('link', {name: 'Мои бронирования'})).toBeInTheDocument();
     expect(screen.getByText('Main page content')).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: 'Skype'})).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: 'ВКонтакте'})).toBeInTheDocument();
   });
 });

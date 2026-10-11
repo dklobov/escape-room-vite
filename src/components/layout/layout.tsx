@@ -1,5 +1,6 @@
 import {Outlet} from 'react-router-dom';
 
+import Footer from '../footer/footer';
 import Header from '../header/header';
 
 type LayoutProps = {
@@ -15,6 +16,7 @@ function Layout({isAuthorized, onLogoutButtonClick}: LayoutProps): JSX.Element {
         onLogoutButtonClick={onLogoutButtonClick}
       />
       <Outlet />
+      <Footer />
     </div>
   );
 }
